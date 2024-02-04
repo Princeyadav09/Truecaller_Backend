@@ -39,3 +39,4 @@ jobs:
         dockerfile: DockerFile
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        dockerpath: /usr/local/bin/docker
