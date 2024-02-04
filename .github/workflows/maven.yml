@@ -34,7 +34,7 @@ jobs:
     - uses: mr-smithers-excellent/docker-build-push@v6
       name: Build & push Docker image
       with:
-        image: new_repo/image
+        image: princeyadav09/new_repo
         tags: v1, latest
         registry: docker.io
         dockerfile: Dockerfile
