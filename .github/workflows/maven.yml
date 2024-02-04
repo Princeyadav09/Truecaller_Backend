@@ -30,10 +30,10 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
-    - uses: mr-smithers-excellent/docker-build-push@v5
+    - uses: mr-smithers-excellent/docker-build-push@v6
       name: Build & push Docker image
       with:
-        image: princeyadav09/new_repo
+        image: new_repo/image
         tags: latest
         registry: docker.io
         dockerfile: DockerFile
