@@ -2,7 +2,6 @@ package instahyre.assigment.app.controller;
 
 import instahyre.assigment.app.entity.PhoneNumber;
 import instahyre.assigment.app.service.SearchService;
-import instahyre.assigment.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

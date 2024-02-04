@@ -30,3 +30,14 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
+    - name: Docker Build and Push to DockerHub
+      uses: docker/build-push-action@v3
+      with:
+        image: princeyadav09/new_repo
+        tags: latest
+        registry: docker.io
+        dockerfile: DockerFile
+        context: .
+        push: true
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
