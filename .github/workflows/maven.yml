@@ -36,6 +36,13 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+    - name: Docker Build and Push to DockerHub
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        push: true
+        tags: ilkerguldali/boredapp:latest
+
 #    - uses: mr-smithers-excellent/docker-build-push@v6
 #      name: Build & push Docker image
 #      with:
