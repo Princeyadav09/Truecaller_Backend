@@ -30,25 +30,12 @@ jobs:
     - name: Build with Maven
       run: mvn clean install
 
-    - name: Set up Docker Context for Buildx
-      id: buildx-context
-      run: |
-        docker context create test-builder
-
-    - name: Set up Docker Buildx
-      id: buildx
-      uses: docker/setup-buildx-action@v1
-      with:
-       endpoint: test-builder
-
-    - name: Docker Build and Push to DockerHub
-      uses: docker/build-push-action@v3
+    - uses: mr-smithers-excellent/docker-build-push@v6
+      name: Build & push Docker image
       with:
         image: princeyadav09/new_repo
         tags: latest
         registry: docker.io
         dockerfile: DockerFile
-        context: .
-        push: true
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
