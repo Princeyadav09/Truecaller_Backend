@@ -1,4 +1,4 @@
-FROM openjdk:17
+FROM openjdk:20
 EXPOSE 8080
-ADD target/springboot-images-new-jar new_repo.jar
-ENTRYPOINT ["java","-jar","/springboot-images-new.jar"]
+ADD target/new_repo new_repo.jar
+ENTRYPOINT ["java","-jar","/new_repo.jar"]
