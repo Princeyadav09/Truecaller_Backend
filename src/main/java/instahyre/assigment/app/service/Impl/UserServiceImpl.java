@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-
+import java.util.regex.Pattern;
 
 
 @Service
@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse userRegistration(UserRequest userRequest) {
         try {
+            validate(userRequest.getPhoneNumber());
             if (userRequest.getName() == null || userRequest.getName().isEmpty()) {
                 throw new BusinessException("Name cannot be empty", HttpStatus.BAD_REQUEST);
             }
@@ -59,19 +60,20 @@ public class UserServiceImpl implements UserService {
             contact0.setPhoneNumber(userRequest.getPhoneNumber());
 
             List<Contact> contactList = userRequest.getContacts();
-            contactList.add(contact0);
-            if (contactList != null) {
-                for (Contact contact : contactList) {
-                    PhoneNumber phoneNumber = phoneNumberRepository.findByPhoneNumber(contact.getPhoneNumber());
-                    if (phoneNumber != null) {
-                        phoneNumber.getNames().add(contact.getName());
-                    } else {
-                        phoneNumber = new PhoneNumber();
-                        phoneNumber.setPhoneNumber(contact.getPhoneNumber());
-                        phoneNumber.setNames(Collections.singletonList(contact.getName()));
+            if(contactList!=null) {
+                contactList.add(contact0);
+                    for (Contact contact : contactList) {
+                        validate(contact.getPhoneNumber());
+                        PhoneNumber phoneNumber = phoneNumberRepository.findByPhoneNumber(contact.getPhoneNumber());
+                        if (phoneNumber != null) {
+                            phoneNumber.getNames().add(contact.getName());
+                        } else {
+                            phoneNumber = new PhoneNumber();
+                            phoneNumber.setPhoneNumber(contact.getPhoneNumber());
+                            phoneNumber.setNames(Collections.singletonList(contact.getName()));
+                        }
+                        phoneNumberRepository.save(phoneNumber);
                     }
-                    phoneNumberRepository.save(phoneNumber);
-                }
             }
 
             UserResponse userResponse = new UserResponse();
@@ -91,9 +93,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse userLogin(LoginRequest loginRequest) {
        try{
-           if(loginRequest.getPhoneNumber() == null || loginRequest.getPhoneNumber().isEmpty()){
-               throw new BusinessException("Phone Number cannot ne empty",HttpStatus.BAD_REQUEST);
-           }
+           validate(loginRequest.getPhoneNumber());
            if(loginRequest.getPassword() == null || loginRequest.getPassword().isEmpty()){
                throw new BusinessException("Password cannot ne empty",HttpStatus.BAD_REQUEST);
            }
@@ -119,7 +119,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserView getUser(String phoneNumber) {
-        try{
+        validate(phoneNumber);
+
             UserView userView = new UserView();
             User user = userRepository.findByPhoneNumber(phoneNumber);
             if(user != null){
@@ -131,12 +132,26 @@ public class UserServiceImpl implements UserService {
                 if (phoneNumber1 != null) {
                     userView.setName(phoneNumber1.getNames().get(0));
                     userView.setPhoneNumber(phoneNumber1.getPhoneNumber());
+                } else {
+                    throw new BusinessException("Phone Number does not exists !",HttpStatus.BAD_REQUEST);
                 }
             }
             return userView;
-        } catch (Exception ex){
-            throw new BusinessException(ex);
+    }
+
+    public void validate(String phoneNumber){
+        if(phoneNumber == null || phoneNumber.isEmpty()){
+            throw new BusinessException("Phone Number cannot ne empty",HttpStatus.BAD_REQUEST);
         }
+        if(phoneNumber.length() != 10){
+            throw  new BusinessException("Phone Number is not valid !", HttpStatus.BAD_REQUEST);
+        }
+        String regex = "\\d+";
+        Pattern pattern = Pattern.compile(regex);
+        if (!pattern.matcher(phoneNumber).matches()) {
+            throw new BusinessException("Phone Number must contain only digits!", HttpStatus.BAD_REQUEST);
+        }
+
     }
 
 }
